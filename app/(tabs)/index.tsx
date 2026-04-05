@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -94,16 +95,6 @@ const StatPill = memo(function StatPill({ label, value }: StatPillProps) {
   );
 });
 
-interface MacroBadgeProps {
-  label: string;
-}
-const MacroBadge = memo(function MacroBadge({ label }: MacroBadgeProps) {
-  return (
-    <View style={styles.macroBadge}>
-      <Text style={styles.macroBadgeText}>{label}</Text>
-    </View>
-  );
-});
 
 // ─── Update Weight Modal ─────────────────────────────────────────────────────
 
@@ -574,31 +565,51 @@ export default function HomeScreen() {
         {/* ── BLOCO 3 — NUTRIÇÃO ─────────────────────────── */}
         {/* TODO: conectar API — mealPlanService.getMealPlan(userId) */}
         <FadeUpView delay={260}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/meal-plan')}
-          activeOpacity={0.85}
-        >
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Plano Alimentar</Text>
-            <ChevronRight size={18} color={Colors.accent} strokeWidth={2} />
-          </View>
+          <TouchableOpacity
+            style={mealCardStyles.wrapper}
+            onPress={() => router.push('/meal-plan')}
+            activeOpacity={0.9}
+          >
+            <ImageBackground
+              source={{ uri: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80' }}
+              style={mealCardStyles.image}
+              imageStyle={mealCardStyles.imageStyle}
+            >
+              {/* Gradient overlay escuro */}
+              <LinearGradient
+                colors={['rgba(0,0,0,0.08)', 'rgba(0,0,0,0.55)', 'rgba(0,0,0,0.88)']}
+                style={mealCardStyles.overlay}
+              >
+                {/* Badge topo */}
+                <View style={mealCardStyles.topRow}>
+                  <View style={mealCardStyles.badge}>
+                    <Text style={mealCardStyles.badgeText}>Nutrição</Text>
+                  </View>
+                  <ChevronRight size={18} color="rgba(255,255,255,0.7)" strokeWidth={2} />
+                </View>
 
-          {/* Macro badges */}
-          <View style={styles.macroRow}>
-            <MacroBadge label={`${totalProtein}g Proteína`} />
-            <MacroBadge label={`${totalCarbs}g Carbo`} />
-            <MacroBadge label={`${totalFat}g Lipídeo`} />
-          </View>
+                {/* Macros em pílulas compactas */}
+                <View style={mealCardStyles.macroRow}>
+                  {[
+                    { label: 'P', value: `${totalProtein}g` },
+                    { label: 'C', value: `${totalCarbs}g` },
+                    { label: 'G', value: `${totalFat}g` },
+                  ].map((m) => (
+                    <View key={m.label} style={mealCardStyles.macroPill}>
+                      <Text style={mealCardStyles.macroLabel}>{m.label}</Text>
+                      <Text style={mealCardStyles.macroValue}>{m.value}</Text>
+                    </View>
+                  ))}
+                </View>
 
-          {/* Total kcal */}
-          <Text style={styles.kcalTotal}>
-            {totalCalories.toLocaleString('pt-BR')} kcal total
-          </Text>
-
-          {/* Tap hint */}
-          <Text style={styles.tapHint}>Toque para ver o plano completo →</Text>
-        </TouchableOpacity>
+                {/* Título e kcal */}
+                <Text style={mealCardStyles.title}>Plano Alimentar</Text>
+                <Text style={mealCardStyles.kcal}>
+                  {totalCalories.toLocaleString('pt-BR')} kcal hoje
+                </Text>
+              </LinearGradient>
+            </ImageBackground>
+          </TouchableOpacity>
         </FadeUpView>
 
         {/* ── BLOCO 4 — ASSISTENTE NUTRICIONAL IA ────────── */}
@@ -618,6 +629,87 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+
+// ─── Meal Card Styles ────────────────────────────────────────────────────────
+
+const mealCardStyles = StyleSheet.create({
+  wrapper: {
+    borderRadius: BorderRadius.card,
+    overflow: 'hidden',
+    height: 200,
+  },
+  image: {
+    flex: 1,
+  },
+  imageStyle: {
+    borderRadius: BorderRadius.card,
+  },
+  overlay: {
+    flex: 1,
+    padding: Spacing.md,
+    justifyContent: 'flex-end',
+    gap: 6,
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'absolute',
+    top: Spacing.md,
+    left: Spacing.md,
+    right: Spacing.md,
+  },
+  badge: {
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    borderRadius: BorderRadius.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+  },
+  badgeText: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12,
+    color: '#FFFFFF',
+  },
+  macroRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 4,
+  },
+  macroPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(200,255,0,0.18)',
+    borderRadius: BorderRadius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(200,255,0,0.3)',
+  },
+  macroLabel: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 11,
+    color: Colors.accent,
+  },
+  macroValue: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 11,
+    color: '#FFFFFF',
+  },
+  title: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 20,
+    color: '#FFFFFF',
+    lineHeight: 24,
+  },
+  kcal: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.65)',
+  },
+});
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
@@ -815,36 +907,6 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
 
-  // Macro badges
-  macroRow: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  macroBadge: {
-    backgroundColor: Colors.accentFaded,
-    borderRadius: BorderRadius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(200,255,0,0.25)',
-  },
-  macroBadgeText: {
-    fontFamily: 'Inter_500Medium',
-    fontSize: 12,
-    color: Colors.accent,
-  },
-  kcalTotal: {
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 22,
-    color: Colors.text,
-  },
-  tapHint: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginTop: -Spacing.sm,
-  },
 
   // Modal
   modalBackdrop: {
