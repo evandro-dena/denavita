@@ -317,6 +317,7 @@ const styles = StyleSheet.create({
   },
   pillsRow: {
     paddingHorizontal: Spacing.md,
+    paddingVertical: 4,
     gap: 8,
   },
   grid: {
