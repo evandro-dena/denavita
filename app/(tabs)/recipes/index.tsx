@@ -181,6 +181,7 @@ const cardStyles = StyleSheet.create({
     fontSize: 13,
     color: Colors.text,
     lineHeight: 18,
+    minHeight: 36, // sempre 2 linhas — mantém kcal/tempo alinhados entre cards
   },
   metaRow: {
     flexDirection: 'row',
