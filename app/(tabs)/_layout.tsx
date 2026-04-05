@@ -108,7 +108,8 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Telas legadas — ocultas da tab bar */}
+      {/* Telas ocultas da tab bar */}
+      <Tabs.Screen name="recipes/[id]" options={{ href: null }} />
       <Tabs.Screen name="diet" options={{ href: null }} />
       <Tabs.Screen name="workouts" options={{ href: null }} />
       <Tabs.Screen name="shop" options={{ href: null }} />
