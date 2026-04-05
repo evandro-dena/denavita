@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -84,8 +85,14 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       activeOpacity={0.85}
     >
       {/* Image / emoji placeholder */}
-      <View style={[cardStyles.imageBox, { backgroundColor: recipe.color }]}>
-        <Text style={cardStyles.emoji}>{recipe.emoji}</Text>
+      <ImageBackground
+        source={recipe.coverImage ?? { uri: '' }}
+        style={[cardStyles.imageBox, { backgroundColor: recipe.color }]}
+        imageStyle={{ resizeMode: 'cover' }}
+      >
+        {!recipe.coverImage && (
+          <Text style={cardStyles.emoji}>{recipe.emoji}</Text>
+        )}
 
         {/* Heart button */}
         <TouchableOpacity
@@ -105,7 +112,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         <View style={cardStyles.categoryPill}>
           <Text style={cardStyles.categoryText}>{recipe.category}</Text>
         </View>
-      </View>
+      </ImageBackground>
 
       {/* Info */}
       <View style={cardStyles.info}>

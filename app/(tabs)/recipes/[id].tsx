@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
+  ImageBackground,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -240,13 +241,19 @@ export default function RecipeDetailScreen() {
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} bounces>
         {/* ── HERO ──────────────────────────────────────── */}
-        <View style={[styles.hero, { backgroundColor: recipe.color }]}>
-          <Text style={styles.heroEmoji}>{recipe.emoji}</Text>
+        <ImageBackground
+          source={recipe.coverImage ?? { uri: '' }}
+          style={[styles.hero, { backgroundColor: recipe.color }]}
+          imageStyle={{ resizeMode: 'cover' }}
+        >
+          {!recipe.coverImage && (
+            <Text style={styles.heroEmoji}>{recipe.emoji}</Text>
+          )}
 
           {/* Gradient overlay */}
           <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.45)', Colors.background]}
-            locations={[0.3, 0.7, 1]}
+            colors={['rgba(0,0,0,0.15)', 'rgba(0,0,0,0.5)', Colors.background]}
+            locations={[0.2, 0.65, 1]}
             style={StyleSheet.absoluteFill}
             pointerEvents="none"
           />
@@ -264,7 +271,7 @@ export default function RecipeDetailScreen() {
           <View style={styles.heroCategoryPill}>
             <Text style={styles.heroCategoryText}>{recipe.category}</Text>
           </View>
-        </View>
+        </ImageBackground>
 
         {/* ── CONTENT ───────────────────────────────────── */}
         <View style={styles.content}>

@@ -55,7 +55,8 @@ export interface Recipe {
   name: string;
   category: RecipeCategory;
   emoji: string;
-  color: string;       // placeholder background color
+  color: string;       // fallback background color when no image
+  coverImage?: number; // require() local asset
   calories: number;
   protein: number;
   carbs: number;
