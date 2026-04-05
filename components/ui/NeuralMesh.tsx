@@ -51,13 +51,21 @@ function buildNodes(): NodeDef[] {
 const NODES = buildNodes();
 
 // ─── Componente ──────────────────────────────────────────────────────────────
-function NeuralMeshBase() {
+interface NeuralMeshProps {
+  paused?: boolean;
+}
+
+function NeuralMeshBase({ paused = false }: NeuralMeshProps) {
   const [t, setT] = useState(0);
   const startRef = useRef(Date.now());
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
 
   useEffect(() => {
     const id = setInterval(() => {
-      setT((Date.now() - startRef.current) / 1000);
+      if (!pausedRef.current) {
+        setT((Date.now() - startRef.current) / 1000);
+      }
     }, INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
@@ -112,6 +120,7 @@ function NeuralMeshBase() {
 }
 
 export default memo(NeuralMeshBase);
+export type { NeuralMeshProps };
 
 const styles = StyleSheet.create({
   wrapper: {

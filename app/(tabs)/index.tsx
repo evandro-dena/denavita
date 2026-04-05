@@ -180,7 +180,7 @@ function AIChatBlock({ userName }: { userName: string }) {
       >
         {/* Núcleo neural — compacto, centralizado */}
         <View style={aiStyles.meshArea}>
-          <NeuralMesh />
+          <NeuralMesh paused={scrolling} />
         </View>
 
         {/* Texto ABAIXO do núcleo — sem sobreposição */}
@@ -224,7 +224,7 @@ function AIChatBlock({ userName }: { userName: string }) {
 
             {/* Núcleo + texto no modal — só monta quando modal abre */}
             <View style={chatStyles.meshWrapper}>
-              {chatOpen && <NeuralMesh />}
+              {chatOpen && <NeuralMesh paused={false} />}
             </View>
             <Text style={chatStyles.meshGreeting}>
               Olá, {userName}!{'\n'}Como posso te ajudar hoje?
@@ -485,6 +485,7 @@ const chatStyles = StyleSheet.create({
 export default function HomeScreen() {
   const [currentWeight, setCurrentWeight] = useState(mockUser.currentWeight);
   const [modalVisible, setModalVisible] = useState(false);
+  const [scrolling, setScrolling] = useState(false);
 
   const weightLost = parseFloat((mockUser.startWeight - currentWeight).toFixed(1));
   const { totalCalories, totalProtein, totalCarbs, totalFat } = mockMealPlan;
@@ -494,6 +495,9 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        onScrollBeginDrag={() => setScrolling(true)}
+        onScrollEndDrag={() => setScrolling(false)}
+        onMomentumScrollEnd={() => setScrolling(false)}
       >
         {/* ── HEADER ─────────────────────────────────────── */}
         <View style={styles.header}>
