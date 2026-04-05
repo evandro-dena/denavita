@@ -23,8 +23,10 @@ const CARD_GAP = 12;
 const H_PAD = Spacing.md * 2;
 const CARD_W = (SW - H_PAD - CARD_GAP) / 2;
 
-const CATEGORIES: RecipeCategory[] = [
-  'Todas', 'Café', 'Lanches', 'Almoço', 'Salgadas', 'Sobremesas',
+type FilterCategory = RecipeCategory | 'Curtidas';
+
+const CATEGORIES: FilterCategory[] = [
+  'Todas', 'Curtidas', 'Café', 'Lanches', 'Almoço', 'Salgadas', 'Sobremesas',
 ];
 
 // ─── Filter pill ─────────────────────────────────────────────────────────────
@@ -75,9 +77,15 @@ const pillStyles = StyleSheet.create({
 });
 
 // ─── Recipe card ─────────────────────────────────────────────────────────────
-function RecipeCard({ recipe }: { recipe: Recipe }) {
-  const [liked, setLiked] = useState(false);
-
+function RecipeCard({
+  recipe,
+  liked,
+  onToggleLike,
+}: {
+  recipe: Recipe;
+  liked: boolean;
+  onToggleLike: () => void;
+}) {
   return (
     <TouchableOpacity
       style={cardStyles.card}
@@ -97,7 +105,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         {/* Heart button */}
         <TouchableOpacity
           style={cardStyles.heartBtn}
-          onPress={() => setLiked(l => !l)}
+          onPress={onToggleLike}
           hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
         >
           <Heart
@@ -203,16 +211,25 @@ const cardStyles = StyleSheet.create({
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 export default function RecipesScreen() {
   const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<RecipeCategory>('Todas');
+  const [activeCategory, setActiveCategory] = useState<FilterCategory>('Todas');
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+
+  function toggleLike(id: string) {
+    setLikedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
 
   const filtered = useMemo(() => {
     return mockRecipes.filter((r) => {
-      const matchCat =
-        activeCategory === 'Todas' || r.category === activeCategory;
+      if (activeCategory === 'Curtidas') return likedIds.has(r.id);
+      const matchCat = activeCategory === 'Todas' || r.category === activeCategory;
       const matchQ = r.name.toLowerCase().includes(query.toLowerCase());
       return matchCat && matchQ;
     });
-  }, [query, activeCategory]);
+  }, [query, activeCategory, likedIds]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -249,7 +266,7 @@ export default function RecipesScreen() {
         {CATEGORIES.map((cat) => (
           <FilterPill
             key={cat}
-            label={cat}
+            label={cat === 'Curtidas' ? `♥ Curtidas${likedIds.size > 0 ? ` (${likedIds.size})` : ''}` : cat}
             active={activeCategory === cat}
             onPress={() => setActiveCategory(cat)}
           />
@@ -266,12 +283,28 @@ export default function RecipesScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyBox}>
-            <Text style={styles.emptyEmoji}>🔍</Text>
-            <Text style={styles.emptyText}>Nenhuma receita encontrada</Text>
-            <Text style={styles.emptySub}>Tente outro filtro ou busca</Text>
+            <Text style={styles.emptyEmoji}>
+              {activeCategory === 'Curtidas' ? '♥' : '🔍'}
+            </Text>
+            <Text style={styles.emptyText}>
+              {activeCategory === 'Curtidas'
+                ? 'Nenhuma receita curtida ainda'
+                : 'Nenhuma receita encontrada'}
+            </Text>
+            <Text style={styles.emptySub}>
+              {activeCategory === 'Curtidas'
+                ? 'Toque no ♥ de qualquer receita para salvar'
+                : 'Tente outro filtro ou busca'}
+            </Text>
           </View>
         }
-        renderItem={({ item }) => <RecipeCard recipe={item} />}
+        renderItem={({ item }) => (
+          <RecipeCard
+            recipe={item}
+            liked={likedIds.has(item.id)}
+            onToggleLike={() => toggleLike(item.id)}
+          />
+        )}
       />
     </SafeAreaView>
   );
