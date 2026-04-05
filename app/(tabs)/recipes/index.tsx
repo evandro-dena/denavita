@@ -16,6 +16,7 @@ import { router } from 'expo-router';
 import { Search, Heart } from 'lucide-react-native';
 import { mockRecipes } from '@/mocks/recipesData';
 import { Colors, Spacing, BorderRadius } from '@/constants/theme';
+import { useAppStore } from '@/store';
 import type { Recipe, RecipeCategory } from '@/types';
 
 const { width: SW } = Dimensions.get('window');
@@ -212,15 +213,8 @@ const cardStyles = StyleSheet.create({
 export default function RecipesScreen() {
   const [query, setQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<FilterCategory>('Todas');
-  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
-
-  function toggleLike(id: string) {
-    setLikedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  }
+  const likedIds = useAppStore((s) => s.likedRecipeIds);
+  const toggleLike = useAppStore((s) => s.toggleLikedRecipe);
 
   const filtered = useMemo(() => {
     return mockRecipes.filter((r) => {

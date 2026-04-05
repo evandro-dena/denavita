@@ -14,6 +14,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Clock, Users, BarChart2, Heart, Check } from 'lucide-react-native';
 import { mockRecipes } from '@/mocks/recipesData';
 import { Colors, Spacing, BorderRadius } from '@/constants/theme';
+import { useAppStore } from '@/store';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 const HERO_H = SH * 0.4;
@@ -213,7 +214,9 @@ export default function RecipeDetailScreen() {
   const recipe = mockRecipes.find((r) => r.id === id);
 
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [saved, setSaved] = useState(false);
+  const likedIds = useAppStore((s) => s.likedRecipeIds);
+  const toggleLike = useAppStore((s) => s.toggleLikedRecipe);
+  const saved = id ? likedIds.has(id) : false;
 
   function toggleIngredient(ingId: string) {
     setChecked((prev) => {
@@ -342,7 +345,7 @@ export default function RecipeDetailScreen() {
       {/* ── FLOATING SAVE BUTTON ──────────────────────── */}
       <TouchableOpacity
         style={[styles.fab, saved && styles.fabSaved]}
-        onPress={() => setSaved((s) => !s)}
+        onPress={() => id && toggleLike(id)}
         activeOpacity={0.85}
       >
         <Heart
