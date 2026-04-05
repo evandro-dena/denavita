@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import {
   View,
   Text,
@@ -14,9 +14,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Bell, ChevronRight, X } from 'lucide-react-native';
+import { Bell, ChevronRight, X, Sparkles, Send } from 'lucide-react-native';
 import GaugeChart from '@/components/dashboard/GaugeChart';
 import FadeUpView from '@/components/ui/FadeUpView';
+import NeuralMesh from '@/components/ui/NeuralMesh';
 import { mockUser } from '@/mocks/userData';
 import { mockMealPlan } from '@/mocks/mealPlanData';
 import { Colors, Spacing, BorderRadius } from '@/constants/theme';
@@ -49,7 +50,7 @@ function formatKcal(kcal: number) {
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-function WeekCalendar() {
+const WeekCalendar = memo(function WeekCalendar() {
   const days = buildWeekDays();
   return (
     <ScrollView
@@ -78,31 +79,31 @@ function WeekCalendar() {
       ))}
     </ScrollView>
   );
-}
+});
 
 interface StatPillProps {
   label: string;
   value: string;
 }
-function StatPill({ label, value }: StatPillProps) {
+const StatPill = memo(function StatPill({ label, value }: StatPillProps) {
   return (
     <View style={styles.statPill}>
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
   );
-}
+});
 
 interface MacroBadgeProps {
   label: string;
 }
-function MacroBadge({ label }: MacroBadgeProps) {
+const MacroBadge = memo(function MacroBadge({ label }: MacroBadgeProps) {
   return (
     <View style={styles.macroBadge}>
       <Text style={styles.macroBadgeText}>{label}</Text>
     </View>
   );
-}
+});
 
 // ─── Update Weight Modal ─────────────────────────────────────────────────────
 
@@ -171,6 +172,321 @@ function UpdateWeightModal({ visible, onClose, onConfirm }: UpdateWeightModalPro
     </Modal>
   );
 }
+
+// ─── AI Chat Block ───────────────────────────────────────────────────────────
+
+function AIChatBlock({ userName }: { userName: string }) {
+  const [inputText, setInputText] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
+
+  return (
+    <>
+      <TouchableOpacity
+        style={aiStyles.card}
+        onPress={() => setChatOpen(true)}
+        activeOpacity={0.9}
+      >
+        {/* Núcleo neural — compacto, centralizado */}
+        <View style={aiStyles.meshArea}>
+          <NeuralMesh />
+        </View>
+
+        {/* Texto ABAIXO do núcleo — sem sobreposição */}
+        <View style={aiStyles.textArea}>
+          <View style={aiStyles.badgeRow}>
+            <Sparkles size={12} color={Colors.accent} strokeWidth={2} />
+            <Text style={aiStyles.badgeText}>IA Nutricional</Text>
+          </View>
+          <Text style={aiStyles.greeting}>Olá, {userName}!</Text>
+          <Text style={aiStyles.sub}>Como posso te ajudar hoje?</Text>
+        </View>
+
+        {/* Input simulado na base */}
+        <View style={aiStyles.inputRow} pointerEvents="none">
+          <Text style={aiStyles.inputPlaceholder}>Faça uma pergunta...</Text>
+          <View style={aiStyles.sendBtn}>
+            <Send size={14} color="#000" strokeWidth={2.5} />
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      {/* Modal de chat (V1 — simulado) */}
+      <Modal
+        visible={chatOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setChatOpen(false)}
+      >
+        <View style={chatStyles.backdrop}>
+          <View style={chatStyles.sheet}>
+            {/* Header */}
+            <View style={chatStyles.header}>
+              <View style={chatStyles.headerLeft}>
+                <Sparkles size={18} color={Colors.accent} strokeWidth={2} />
+                <Text style={chatStyles.headerTitle}>Assistente Nutricional</Text>
+              </View>
+              <TouchableOpacity onPress={() => setChatOpen(false)}>
+                <X size={20} color={Colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Núcleo + texto no modal — só monta quando modal abre */}
+            <View style={chatStyles.meshWrapper}>
+              {chatOpen && <NeuralMesh />}
+            </View>
+            <Text style={chatStyles.meshGreeting}>
+              Olá, {userName}!{'\n'}Como posso te ajudar hoje?
+            </Text>
+
+            {/* Sugestões rápidas */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={chatStyles.suggestionsRow}
+            >
+              {[
+                'O que posso comer antes do treino?',
+                'Quantas proteínas preciso por dia?',
+                'O que é déficit calórico?',
+                'Posso comer fruta à noite?',
+              ].map((s) => (
+                <TouchableOpacity
+                  key={s}
+                  style={chatStyles.suggestion}
+                  onPress={() => setInputText(s)}
+                >
+                  <Text style={chatStyles.suggestionText}>{s}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Aviso V1 */}
+            <View style={chatStyles.v1Banner}>
+              <Text style={chatStyles.v1Text}>
+                🚧 Em breve — IA treinada em nutrição estará disponível na V2
+              </Text>
+            </View>
+
+            {/* Input */}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+              <View style={chatStyles.inputArea}>
+                <TextInput
+                  style={chatStyles.input}
+                  value={inputText}
+                  onChangeText={setInputText}
+                  placeholder="Faça uma pergunta sobre nutrição..."
+                  placeholderTextColor={Colors.textMuted}
+                  multiline
+                />
+                <TouchableOpacity
+                  style={[
+                    chatStyles.sendBtn,
+                    !inputText.trim() && chatStyles.sendBtnDisabled,
+                  ]}
+                  disabled={!inputText.trim()}
+                >
+                  <Send size={16} color="#000" strokeWidth={2.5} />
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
+}
+
+const aiStyles = StyleSheet.create({
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.card,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    overflow: 'hidden',
+    alignItems: 'center',
+  },
+  // Área do núcleo — compacta e centralizada
+  meshArea: {
+    paddingTop: Spacing.md,
+    paddingBottom: 4,
+    alignItems: 'center',
+  },
+  // Texto abaixo — sem sobreposição
+  textArea: {
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: Colors.accentFaded,
+    borderRadius: BorderRadius.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(200,255,0,0.2)',
+  },
+  badgeText: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 11,
+    color: Colors.accent,
+  },
+  greeting: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 17,
+    color: Colors.text,
+    textAlign: 'center',
+  },
+  sub: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 46,
+    width: '100%',
+    paddingHorizontal: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    backgroundColor: '#161616',
+  },
+  inputPlaceholder: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: Colors.textMuted,
+  },
+  sendBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+const chatStyles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    backgroundColor: Colors.surface,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    borderTopWidth: 1,
+    borderColor: Colors.border,
+    paddingBottom: Platform.OS === 'ios' ? 36 : 16,
+    overflow: 'hidden',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerTitle: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 16,
+    color: Colors.text,
+  },
+  meshWrapper: {
+    alignItems: 'center',
+    paddingTop: Spacing.sm,
+  },
+  meshGreeting: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 15,
+    color: Colors.text,
+    textAlign: 'center',
+    lineHeight: 22,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.sm,
+  },
+  suggestionsRow: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    gap: 8,
+  },
+  suggestion: {
+    backgroundColor: '#222222',
+    borderRadius: BorderRadius.pill,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  suggestionText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
+  v1Banner: {
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.sm,
+    backgroundColor: Colors.accentFaded,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(200,255,0,0.2)',
+  },
+  v1Text: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: Colors.accent,
+    textAlign: 'center',
+  },
+  inputArea: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 10,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+  },
+  input: {
+    flex: 1,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: Colors.text,
+    backgroundColor: '#222222',
+    borderRadius: BorderRadius.input,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
+    maxHeight: 100,
+  },
+  sendBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sendBtnDisabled: {
+    backgroundColor: Colors.border,
+  },
+});
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
@@ -283,6 +599,11 @@ export default function HomeScreen() {
           {/* Tap hint */}
           <Text style={styles.tapHint}>Toque para ver o plano completo →</Text>
         </TouchableOpacity>
+        </FadeUpView>
+
+        {/* ── BLOCO 4 — ASSISTENTE NUTRICIONAL IA ────────── */}
+        <FadeUpView delay={360}>
+          <AIChatBlock userName={mockUser.name} />
         </FadeUpView>
 
         <View style={{ height: Spacing.xl }} />
