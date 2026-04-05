@@ -150,14 +150,14 @@ function MealAccordion({ meal }: { meal: Meal }) {
           {/* Separator */}
           <View style={accordionStyles.separator} />
 
-          {/* Food items */}
-          {meal.items.map((item, idx) => (
+          {/* Food items — quantidade antes do nome */}
+          {meal.items.map((item) => (
             <View key={item.id} style={accordionStyles.foodItem}>
               <View style={accordionStyles.foodDot} />
-              <Text style={accordionStyles.foodName} numberOfLines={2}>
-                {item.name}
+              <Text style={accordionStyles.foodLine}>
+                <Text style={accordionStyles.foodQty}>{item.quantity} </Text>
+                <Text style={accordionStyles.foodName}>{item.name}</Text>
               </Text>
-              <Text style={accordionStyles.foodQty}>{item.quantity}</Text>
             </View>
           ))}
 
@@ -278,27 +278,27 @@ const accordionStyles = StyleSheet.create({
     gap: 10,
   },
   foodDot: {
-    width: 6,
-    height: 6,
+    width: 5,
+    height: 5,
     borderRadius: 3,
     backgroundColor: Colors.accent,
-    marginTop: 6,
+    marginTop: 7,
     flexShrink: 0,
   },
-  foodName: {
+  foodLine: {
     flex: 1,
-    fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: Colors.text,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   foodQty: {
-    fontFamily: 'Inter_500Medium',
-    fontSize: 12,
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 13,
+    color: Colors.text,
+  },
+  foodName: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
     color: Colors.textSecondary,
-    textAlign: 'right',
-    flexShrink: 0,
-    maxWidth: 120,
   },
   macroSummary: {
     flexDirection: 'row',
