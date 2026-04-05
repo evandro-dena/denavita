@@ -641,14 +641,16 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
 
-  // Bottom controls
+  // Bottom controls — fixado abaixo do viewfinder
   controls: {
+    position: 'absolute',
+    top: VF_TOP + VF_SIZE + Spacing.xl,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
-    paddingBottom: Platform.OS === 'ios' ? 12 : Spacing.lg,
-    paddingTop: Spacing.md,
   },
   shutter: {
     width: 72,
