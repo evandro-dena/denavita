@@ -616,19 +616,19 @@ export default function HomeScreen() {
         {/* TESTE: título fora do bloco estilo Spotify — para reverter, troque pelo <AIChatBlock> abaixo */}
         <FadeUpView delay={360}>
           <View style={aiOpenStyles.section}>
-            {/* Título + NeuralMesh fora do card */}
+            {/* Título à esquerda, NeuralMesh à direita */}
             <View style={aiOpenStyles.header}>
-              <NeuralMesh />
               <View style={aiOpenStyles.headerText}>
                 <Text style={aiOpenStyles.title}>Tire suas dúvidas</Text>
                 <Text style={aiOpenStyles.subtitle}>Assistente nutricional IA</Text>
               </View>
+              <NeuralMesh />
             </View>
 
-            {/* Card compacto de input */}
+            {/* Card compacto — abre tela ai-chat */}
             <TouchableOpacity
               style={aiOpenStyles.inputCard}
-              onPress={() => {/* abre modal — conectar ao AIChatBlock na V2 */}}
+              onPress={() => router.push('/ai-chat')}
               activeOpacity={0.85}
             >
               <View style={aiOpenStyles.inputRow}>

@@ -54,6 +54,7 @@ export default function RootLayout() {
           name="privacy"
           options={{ animation: 'slide_from_right' }}
         />
+        <Stack.Screen name="ai-chat" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="light" />
