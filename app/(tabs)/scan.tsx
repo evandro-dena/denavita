@@ -27,6 +27,9 @@ const { width: SW, height: SH } = Dimensions.get('window');
 
 // Viewfinder box size
 const VF_SIZE = SW * 0.72;
+// Viewfinder position (centralizado na tela)
+const VF_LEFT = (SW - VF_SIZE) / 2;
+const VF_TOP  = (SH - VF_SIZE) / 2;
 // Corner arm length
 const CORNER_LEN = 28;
 // Corner thickness
@@ -44,41 +47,48 @@ const MOCK_RESULT = {
 };
 
 // ─── Corner piece ────────────────────────────────────────────────────────────
+// vTop/vBottom: posição vertical do canto no viewfinder
+// vLeft/vRight: posição horizontal do canto no viewfinder
 function Corner({
-  top,
-  left,
-  right,
-  bottom,
+  vTop, vBottom, vLeft, vRight,
 }: {
-  top?: boolean;
-  left?: boolean;
-  right?: boolean;
-  bottom?: boolean;
+  vTop?: boolean; vBottom?: boolean; vLeft?: boolean; vRight?: boolean;
 }) {
+  const isBottom = vBottom !== undefined;
+  const isRight  = vRight !== undefined;
+
   return (
     <View
       style={[
         cornerStyles.base,
-        top !== undefined && { top: 0 },
-        bottom !== undefined && { bottom: 0 },
-        left !== undefined && { left: 0 },
-        right !== undefined && { right: 0 },
+        isBottom ? { bottom: 0 } : { top: 0 },
+        isRight  ? { right: 0 } : { left: 0 },
       ]}
     >
-      {/* Horizontal arm */}
+      {/* Braço horizontal — fica na borda V do canto (topo ou base) */}
       <View
         style={[
           cornerStyles.arm,
-          cornerStyles.armH,
-          right !== undefined && { right: 0 },
+          {
+            width: CORNER_LEN,
+            height: CORNER_T,
+            // topo do container se canto superior, base se canto inferior
+            ...(isBottom ? { bottom: 0 } : { top: 0 }),
+            // esquerda se canto esq, direita se canto dir
+            ...(isRight ? { right: 0 } : { left: 0 }),
+          },
         ]}
       />
-      {/* Vertical arm */}
+      {/* Braço vertical — fica na borda H do canto (esq ou dir) */}
       <View
         style={[
           cornerStyles.arm,
-          cornerStyles.armV,
-          bottom !== undefined && { bottom: 0 },
+          {
+            width: CORNER_T,
+            height: CORNER_LEN,
+            ...(isBottom ? { bottom: 0 } : { top: 0 }),
+            ...(isRight ? { right: 0 } : { left: 0 }),
+          },
         ]}
       />
     </View>
@@ -95,18 +105,6 @@ const cornerStyles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: Colors.accent,
     borderRadius: CORNER_R,
-  },
-  armH: {
-    width: CORNER_LEN,
-    height: CORNER_T,
-    top: 0,
-    left: 0,
-  },
-  armV: {
-    width: CORNER_T,
-    height: CORNER_LEN,
-    top: 0,
-    left: 0,
   },
 });
 
@@ -472,59 +470,43 @@ export default function ScanScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Dark overlay — dimmed sides */}
-        <View style={styles.overlay} pointerEvents="none">
-          {/* Top dim */}
-          <View style={styles.dimTop} />
-
-          {/* Middle row */}
-          <View style={styles.middleRow}>
-            <View style={styles.dimSide} />
-
-            {/* Viewfinder */}
-            <View style={styles.viewfinder}>
-              {/* 4 corner pieces */}
-              <Corner top left />
-              <View style={[cornerStyles.base, { top: 0, right: 0 }]}>
-                <View style={[cornerStyles.arm, cornerStyles.armH, { right: 0, left: undefined }]} />
-                <View style={[cornerStyles.arm, cornerStyles.armV, { right: 0, left: undefined }]} />
-              </View>
-              <View style={[cornerStyles.base, { bottom: 0, left: 0 }]}>
-                <View style={[cornerStyles.arm, cornerStyles.armH]} />
-                <View style={[cornerStyles.arm, cornerStyles.armV, { bottom: 0, top: undefined }]} />
-              </View>
-              <View style={[cornerStyles.base, { bottom: 0, right: 0 }]}>
-                <View style={[cornerStyles.arm, cornerStyles.armH, { right: 0, left: undefined }]} />
-                <View style={[cornerStyles.arm, cornerStyles.armV, { bottom: 0, top: undefined, right: 0, left: undefined }]} />
-              </View>
-
-              {/* Scan line */}
-              {screenState === 'idle' && <ScanLine />}
-
-              {/* Loading state */}
-              {screenState === 'loading' && (
-                <Animated.View style={[styles.loadingBox, loadingAnimStyle]}>
-                  <ActivityIndicator size="large" color={Colors.accent} />
-                  <Text style={styles.loadingText}>Analisando...</Text>
-                </Animated.View>
-              )}
-            </View>
-
-            <View style={styles.dimSide} />
-          </View>
-
-          {/* Hint text */}
-          {screenState === 'idle' && (
-            <View style={styles.hintRow}>
-              <Text style={styles.hintText}>
-                Posicione o alimento dentro do quadro
-              </Text>
-            </View>
-          )}
-
-          {/* Bottom dim */}
-          <View style={styles.dimBottom} />
+        {/* ── OVERLAY: 4 retângulos cobrem tudo exceto o viewfinder ── */}
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+          {/* Topo */}
+          <View style={[styles.dimRect, { top: 0, left: 0, right: 0, height: VF_TOP }]} />
+          {/* Base */}
+          <View style={[styles.dimRect, { top: VF_TOP + VF_SIZE, left: 0, right: 0, bottom: 0 }]} />
+          {/* Esquerda */}
+          <View style={[styles.dimRect, { top: VF_TOP, left: 0, width: VF_LEFT, height: VF_SIZE }]} />
+          {/* Direita */}
+          <View style={[styles.dimRect, { top: VF_TOP, left: VF_LEFT + VF_SIZE, right: 0, height: VF_SIZE }]} />
         </View>
+
+        {/* ── VIEWFINDER (cantos + scan line) ── */}
+        <View style={styles.viewfinder} pointerEvents="none">
+          <Corner vTop vLeft />
+          <Corner vTop vRight />
+          <Corner vBottom vLeft />
+          <Corner vBottom vRight />
+
+          {screenState === 'idle' && <ScanLine />}
+
+          {screenState === 'loading' && (
+            <Animated.View style={[styles.loadingBox, loadingAnimStyle]}>
+              <ActivityIndicator size="large" color={Colors.accent} />
+              <Text style={styles.loadingText}>Analisando...</Text>
+            </Animated.View>
+          )}
+        </View>
+
+        {/* Hint text */}
+        {screenState === 'idle' && (
+          <View style={styles.hintRow} pointerEvents="none">
+            <Text style={styles.hintText}>
+              Posicione o alimento dentro do quadro
+            </Text>
+          </View>
+        )}
 
         {/* ── BOTTOM CONTROLS ──────────────────────────── */}
         {screenState !== 'result' && (
@@ -616,39 +598,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Overlay with dimmed sides
-  overlay: {
-    flex: 1,
-  },
-  dimTop: {
-    height: 32,
-    backgroundColor: DIM_COLOR,
-  },
-  middleRow: {
-    flexDirection: 'row',
-    height: VF_SIZE,
-  },
-  dimSide: {
-    flex: 1,
-    backgroundColor: DIM_COLOR,
-  },
-  dimBottom: {
-    flex: 1,
+  // Overlay retângulos ao redor do viewfinder
+  dimRect: {
+    position: 'absolute',
     backgroundColor: DIM_COLOR,
   },
 
-  // Viewfinder box (transparent, just corners)
+  // Viewfinder box (centralizado absolutamente na tela)
   viewfinder: {
+    position: 'absolute',
+    top: VF_TOP,
+    left: VF_LEFT,
     width: VF_SIZE,
     height: VF_SIZE,
-    position: 'relative',
   },
 
-  // Hint
+  // Hint (abaixo do viewfinder)
   hintRow: {
+    position: 'absolute',
+    top: VF_TOP + VF_SIZE,
+    left: 0,
+    right: 0,
     alignItems: 'center',
     paddingVertical: Spacing.md,
-    backgroundColor: DIM_COLOR,
   },
   hintText: {
     fontFamily: 'Inter_400Regular',
