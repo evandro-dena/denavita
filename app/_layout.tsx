@@ -9,7 +9,7 @@ import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  initialRouteName: 'splash',
+  initialRouteName: 'index',
 };
 
 export default function RootLayout() {
