@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   // Bottom controls — fixado abaixo do viewfinder
   controls: {
     position: 'absolute',
-    top: VF_TOP + VF_SIZE + Spacing.xl,
+    top: VF_TOP + VF_SIZE + 72,
     left: 0,
     right: 0,
     flexDirection: 'row',
