@@ -18,14 +18,12 @@ import { Colors, Spacing, BorderRadius } from '@/constants/theme';
 // ─── Dúvidas frequentes ──────────────────────────────────────────────────────
 
 // 2 na primeira linha, 3 na segunda
-const QUESTIONS_ROW1 = [
-  { emoji: '🥩', text: 'Proteínas por dia?' },
-  { emoji: '🔥', text: 'Déficit calórico?' },
-];
-const QUESTIONS_ROW2 = [
-  { emoji: '💧', text: 'Água por dia?' },
-  { emoji: '🍌', text: 'Fruta à noite?' },
-  { emoji: '🏋️', text: 'Antes do treino?' },
+const QUESTIONS = [
+  { emoji: '🥩', text: 'Quantas proteínas preciso por dia?' },
+  { emoji: '🔥', text: 'O que é déficit calórico?' },
+  { emoji: '💧', text: 'Quanto de água devo beber por dia?' },
+  { emoji: '🍌', text: 'Posso comer fruta à noite?' },
+  { emoji: '🏋️', text: 'O que comer antes do treino?' },
 ];
 
 // ─── Componente ──────────────────────────────────────────────────────────────
@@ -69,34 +67,17 @@ export default function AIChatScreen() {
           {/* ── DÚVIDAS FREQUENTES ── */}
           <Text style={styles.sectionLabel}>Dúvidas frequentes</Text>
           <View style={styles.questionsGrid}>
-            {/* Linha 1 — 2 pílulas */}
-            <View style={styles.questionsRow}>
-              {QUESTIONS_ROW1.map((q) => (
-                <TouchableOpacity
-                  key={q.text}
-                  style={styles.questionCard}
-                  activeOpacity={0.75}
-                  onPress={() => setInputText(q.text)}
-                >
-                  <Text style={styles.questionEmoji}>{q.emoji}</Text>
-                  <Text style={styles.questionText} numberOfLines={1}>{q.text}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            {/* Linha 2 — 3 pílulas */}
-            <View style={styles.questionsRow}>
-              {QUESTIONS_ROW2.map((q) => (
-                <TouchableOpacity
-                  key={q.text}
-                  style={styles.questionCard}
-                  activeOpacity={0.75}
-                  onPress={() => setInputText(q.text)}
-                >
-                  <Text style={styles.questionEmoji}>{q.emoji}</Text>
-                  <Text style={styles.questionText} numberOfLines={1}>{q.text}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            {QUESTIONS.map((q) => (
+              <TouchableOpacity
+                key={q.text}
+                style={styles.questionCard}
+                activeOpacity={0.75}
+                onPress={() => setInputText(q.text)}
+              >
+                <Text style={styles.questionEmoji}>{q.emoji}</Text>
+                <Text style={styles.questionText} numberOfLines={1}>{q.text}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           {/* ── AVISO V1 ── */}
@@ -197,21 +178,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     gap: 8,
   },
-  questionsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
   questionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 10,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.pill,
     borderWidth: 1,
     borderColor: Colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    flexShrink: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 11,
   },
   questionEmoji: {
     fontSize: 14,
