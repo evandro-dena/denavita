@@ -19,13 +19,13 @@ import { Colors, Spacing, BorderRadius } from '@/constants/theme';
 
 // 2 na primeira linha, 3 na segunda
 const QUESTIONS_ROW1 = [
-  { emoji: '🥩', text: 'Quantas proteínas preciso?' },
-  { emoji: '🔥', text: 'O que é déficit calórico?' },
+  { emoji: '🥩', text: 'Proteínas por dia?' },
+  { emoji: '🔥', text: 'Déficit calórico?' },
 ];
 const QUESTIONS_ROW2 = [
-  { emoji: '💧', text: 'Quanto de água por dia?' },
-  { emoji: '🍌', text: 'Posso comer fruta à noite?' },
-  { emoji: '🏋️', text: 'O que comer antes do treino?' },
+  { emoji: '💧', text: 'Água por dia?' },
+  { emoji: '🍌', text: 'Fruta à noite?' },
+  { emoji: '🏋️', text: 'Antes do treino?' },
 ];
 
 // ─── Componente ──────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ export default function AIChatScreen() {
                   onPress={() => setInputText(q.text)}
                 >
                   <Text style={styles.questionEmoji}>{q.emoji}</Text>
-                  <Text style={styles.questionText}>{q.text}</Text>
+                  <Text style={styles.questionText} numberOfLines={1}>{q.text}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -93,7 +93,7 @@ export default function AIChatScreen() {
                   onPress={() => setInputText(q.text)}
                 >
                   <Text style={styles.questionEmoji}>{q.emoji}</Text>
-                  <Text style={styles.questionText}>{q.text}</Text>
+                  <Text style={styles.questionText} numberOfLines={1}>{q.text}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
 
   // Hero
   scroll: {
-    paddingBottom: Spacing.md,
+    paddingBottom: 4,
   },
   heroSection: {
     alignItems: 'center',
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.textMuted,
     textAlign: 'center',
-    marginTop: Spacing.md,
+    marginTop: Spacing.sm,
     paddingHorizontal: Spacing.md,
   },
 
