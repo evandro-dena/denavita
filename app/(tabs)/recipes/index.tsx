@@ -314,11 +314,11 @@ const styles = StyleSheet.create({
   pillsScroll: {
     marginTop: Spacing.md,
     flexGrow: 0,
-    height: 48,
+    flexShrink: 0,
   },
   pillsRow: {
     paddingHorizontal: Spacing.md,
-    paddingVertical: 4,
+    paddingVertical: 6,
     gap: 8,
     alignItems: 'center',
   },
