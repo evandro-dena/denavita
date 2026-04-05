@@ -17,17 +17,15 @@ import { Colors, Spacing, BorderRadius } from '@/constants/theme';
 
 // ─── Dúvidas frequentes ──────────────────────────────────────────────────────
 
-const QUESTIONS = [
-  { emoji: '🥩', text: 'Quantas proteínas preciso por dia?' },
-  { emoji: '⏰', text: 'Qual o melhor horário para comer?' },
+// 2 na primeira linha, 3 na segunda
+const QUESTIONS_ROW1 = [
+  { emoji: '🥩', text: 'Quantas proteínas preciso?' },
   { emoji: '🔥', text: 'O que é déficit calórico?' },
-  { emoji: '💧', text: 'Quanto de água devo beber por dia?' },
+];
+const QUESTIONS_ROW2 = [
+  { emoji: '💧', text: 'Quanto de água por dia?' },
   { emoji: '🍌', text: 'Posso comer fruta à noite?' },
   { emoji: '🏋️', text: 'O que comer antes do treino?' },
-  { emoji: '😴', text: 'O que comer antes de dormir?' },
-  { emoji: '🧠', text: 'Quais alimentos melhoram o foco?' },
-  { emoji: '🫀', text: 'Alimentos que ajudam a emagrecer?' },
-  { emoji: '🍽️', text: 'Quantas refeições por dia são ideais?' },
 ];
 
 // ─── Componente ──────────────────────────────────────────────────────────────
@@ -71,25 +69,38 @@ export default function AIChatScreen() {
           {/* ── DÚVIDAS FREQUENTES ── */}
           <Text style={styles.sectionLabel}>Dúvidas frequentes</Text>
           <View style={styles.questionsGrid}>
-            {QUESTIONS.map((q) => (
-              <TouchableOpacity
-                key={q.text}
-                style={styles.questionCard}
-                activeOpacity={0.75}
-                onPress={() => setInputText(q.text)}
-              >
-                <Text style={styles.questionEmoji}>{q.emoji}</Text>
-                <Text style={styles.questionText}>{q.text}</Text>
-              </TouchableOpacity>
-            ))}
+            {/* Linha 1 — 2 pílulas */}
+            <View style={styles.questionsRow}>
+              {QUESTIONS_ROW1.map((q) => (
+                <TouchableOpacity
+                  key={q.text}
+                  style={styles.questionCard}
+                  activeOpacity={0.75}
+                  onPress={() => setInputText(q.text)}
+                >
+                  <Text style={styles.questionEmoji}>{q.emoji}</Text>
+                  <Text style={styles.questionText}>{q.text}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            {/* Linha 2 — 3 pílulas */}
+            <View style={styles.questionsRow}>
+              {QUESTIONS_ROW2.map((q) => (
+                <TouchableOpacity
+                  key={q.text}
+                  style={styles.questionCard}
+                  activeOpacity={0.75}
+                  onPress={() => setInputText(q.text)}
+                >
+                  <Text style={styles.questionEmoji}>{q.emoji}</Text>
+                  <Text style={styles.questionText}>{q.text}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
 
           {/* ── AVISO V1 ── */}
-          <View style={styles.v1Banner}>
-            <Text style={styles.v1Text}>
-              🚧 IA completa disponível em breve na V2
-            </Text>
-          </View>
+          <Text style={styles.v1Text}>🚧 IA completa disponível em breve na V2</Text>
         </ScrollView>
 
         {/* ── INPUT FIXO NA BASE ── */}
@@ -151,7 +162,7 @@ const styles = StyleSheet.create({
 
   // Hero
   scroll: {
-    paddingBottom: Spacing.xl,
+    paddingBottom: Spacing.md,
   },
   heroSection: {
     alignItems: 'center',
@@ -181,11 +192,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
 
-  // Questions grid — pílulas compactas estilo referência
+  // Questions grid — 2 linhas fixas
   questionsGrid: {
     paddingHorizontal: Spacing.md,
+    gap: 8,
+  },
+  questionsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
   },
   questionCard: {
@@ -197,7 +210,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 9,
+    flexShrink: 1,
   },
   questionEmoji: {
     fontSize: 14,
@@ -206,23 +220,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
     fontSize: 13,
     color: Colors.text,
+    flexShrink: 1,
   },
 
-  // V1 banner
-  v1Banner: {
-    marginHorizontal: Spacing.md,
-    marginTop: Spacing.lg,
-    backgroundColor: Colors.accentFaded,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    borderWidth: 1,
-    borderColor: 'rgba(200,255,0,0.2)',
-  },
   v1Text: {
     fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    color: Colors.accent,
+    fontSize: 11,
+    color: Colors.textMuted,
     textAlign: 'center',
+    marginTop: Spacing.md,
+    paddingHorizontal: Spacing.md,
   },
 
   // Input
