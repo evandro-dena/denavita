@@ -9,8 +9,8 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
-  ImageBackground,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Search, Heart } from 'lucide-react-native';
@@ -93,12 +93,17 @@ function RecipeCard({
       onPress={() => router.push(`/(tabs)/recipes/${recipe.id}`)}
       activeOpacity={0.85}
     >
-      {/* Image / emoji placeholder */}
-      <ImageBackground
-        source={recipe.coverImage ?? { uri: '' }}
-        style={[cardStyles.imageBox, { backgroundColor: recipe.color }]}
-        imageStyle={{ resizeMode: 'cover' }}
-      >
+      {/* Image */}
+      <View style={[cardStyles.imageBox, { backgroundColor: recipe.color }]}>
+        {recipe.coverImage && (
+          <Image
+            source={recipe.coverImage}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+            cachePolicy="memory-disk"
+            transition={150}
+          />
+        )}
         {!recipe.coverImage && (
           <Text style={cardStyles.emoji}>{recipe.emoji}</Text>
         )}
@@ -121,7 +126,7 @@ function RecipeCard({
         <View style={cardStyles.categoryPill}>
           <Text style={cardStyles.categoryText}>{recipe.category}</Text>
         </View>
-      </ImageBackground>
+      </View>
 
       {/* Info */}
       <View style={cardStyles.info}>

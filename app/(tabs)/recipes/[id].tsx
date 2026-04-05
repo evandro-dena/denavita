@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Dimensions,
   Platform,
-  ImageBackground,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Clock, Users, BarChart2, Heart, Check } from 'lucide-react-native';
@@ -244,12 +244,16 @@ export default function RecipeDetailScreen() {
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} bounces>
         {/* ── HERO ──────────────────────────────────────── */}
-        <ImageBackground
-          source={recipe.coverImage ?? { uri: '' }}
-          style={[styles.hero, { backgroundColor: recipe.color }]}
-          imageStyle={{ resizeMode: 'cover' }}
-        >
-          {!recipe.coverImage && (
+        <View style={[styles.hero, { backgroundColor: recipe.color }]}>
+          {recipe.coverImage ? (
+            <Image
+              source={recipe.coverImage}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              cachePolicy="memory-disk"
+              transition={200}
+            />
+          ) : (
             <Text style={styles.heroEmoji}>{recipe.emoji}</Text>
           )}
 
@@ -274,7 +278,7 @@ export default function RecipeDetailScreen() {
           <View style={styles.heroCategoryPill}>
             <Text style={styles.heroCategoryText}>{recipe.category}</Text>
           </View>
-        </ImageBackground>
+        </View>
 
         {/* ── CONTENT ───────────────────────────────────── */}
         <View style={styles.content}>
