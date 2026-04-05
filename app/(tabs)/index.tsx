@@ -613,9 +613,35 @@ export default function HomeScreen() {
         </FadeUpView>
 
         {/* ── BLOCO 4 — ASSISTENTE NUTRICIONAL IA ────────── */}
+        {/* TESTE: título fora do bloco estilo Spotify — para reverter, troque pelo <AIChatBlock> abaixo */}
         <FadeUpView delay={360}>
-          <AIChatBlock userName={mockUser.name} />
+          <View style={aiOpenStyles.section}>
+            {/* Título + NeuralMesh fora do card */}
+            <View style={aiOpenStyles.header}>
+              <NeuralMesh />
+              <View style={aiOpenStyles.headerText}>
+                <Text style={aiOpenStyles.title}>Tire suas dúvidas</Text>
+                <Text style={aiOpenStyles.subtitle}>Assistente nutricional IA</Text>
+              </View>
+            </View>
+
+            {/* Card compacto de input */}
+            <TouchableOpacity
+              style={aiOpenStyles.inputCard}
+              onPress={() => {/* abre modal — conectar ao AIChatBlock na V2 */}}
+              activeOpacity={0.85}
+            >
+              <View style={aiOpenStyles.inputRow}>
+                <Sparkles size={14} color={Colors.accent} strokeWidth={2} />
+                <Text style={aiOpenStyles.inputPlaceholder}>Faça uma pergunta sobre nutrição...</Text>
+              </View>
+              <View style={aiOpenStyles.sendBtn}>
+                <Send size={14} color="#000" strokeWidth={2.5} />
+              </View>
+            </TouchableOpacity>
+          </View>
         </FadeUpView>
+        {/* <FadeUpView delay={360}><AIChatBlock userName={mockUser.name} /></FadeUpView> */}
 
         <View style={{ height: Spacing.xl }} />
       </ScrollView>
@@ -629,6 +655,65 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+
+// ─── AI Open Styles (teste — título fora do bloco) ───────────────────────────
+
+const aiOpenStyles = StyleSheet.create({
+  section: {
+    gap: Spacing.sm,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    paddingHorizontal: 2,
+  },
+  headerText: {
+    flex: 1,
+    gap: 2,
+  },
+  title: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 20,
+    color: Colors.text,
+  },
+  subtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
+  inputCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.card,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 14,
+    gap: Spacing.sm,
+  },
+  inputRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  inputPlaceholder: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: Colors.textMuted,
+  },
+  sendBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 // ─── Meal Card Styles ────────────────────────────────────────────────────────
 
