@@ -181,29 +181,30 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
 
-  // Questions grid
+  // Questions grid — pílulas compactas estilo referência
   questionsGrid: {
     paddingHorizontal: Spacing.md,
-    gap: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   questionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 6,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.card,
+    borderRadius: BorderRadius.pill,
     borderWidth: 1,
     borderColor: Colors.border,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   questionEmoji: {
-    fontSize: 22,
+    fontSize: 14,
   },
   questionText: {
-    flex: 1,
     fontFamily: 'Inter_500Medium',
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.text,
   },
 
