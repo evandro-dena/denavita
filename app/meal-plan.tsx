@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  LayoutChangeEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -15,6 +14,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
+
 import { router } from 'expo-router';
 import { ArrowLeft, ChevronDown } from 'lucide-react-native';
 import { mockMealPlan } from '@/mocks/mealPlanData';
@@ -97,12 +97,11 @@ const macroStyles = StyleSheet.create({
 
 function MealAccordion({ meal }: { meal: Meal }) {
   const [open, setOpen] = useState(false);
-  const measuredH = useRef(0);
-  const animH = useSharedValue(0);
+  const animMaxH = useSharedValue(0);
   const arrowDeg = useSharedValue(0);
 
   const bodyAnimStyle = useAnimatedStyle(() => ({
-    height: animH.value,
+    maxHeight: animMaxH.value,
     overflow: 'hidden',
   }));
 
@@ -113,18 +112,11 @@ function MealAccordion({ meal }: { meal: Meal }) {
   function toggle() {
     const next = !open;
     setOpen(next);
-    animH.value = withTiming(next ? measuredH.current : 0, {
-      duration: 300,
+    animMaxH.value = withTiming(next ? 400 : 0, {
+      duration: 320,
       easing: Easing.inOut(Easing.cubic),
     });
     arrowDeg.value = withTiming(next ? 180 : 0, { duration: 300 });
-  }
-
-  function onBodyLayout(e: LayoutChangeEvent) {
-    const h = e.nativeEvent.layout.height;
-    if (h > 0 && measuredH.current === 0) {
-      measuredH.current = h;
-    }
   }
 
   const totalCal = meal.items.reduce((s, i) => s + i.calories, 0);
@@ -154,8 +146,7 @@ function MealAccordion({ meal }: { meal: Meal }) {
 
       {/* Expandable body */}
       <Animated.View style={bodyAnimStyle}>
-        {/* This inner View is always rendered so onLayout fires immediately */}
-        <View onLayout={onBodyLayout} style={accordionStyles.body}>
+        <View style={accordionStyles.body}>
           {/* Separator */}
           <View style={accordionStyles.separator} />
 
