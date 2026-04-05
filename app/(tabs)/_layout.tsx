@@ -1,35 +1,131 @@
+import { useEffect } from 'react';
 import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { View, StyleSheet, Platform } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+} from 'react-native-reanimated';
+import { Home, Camera, BookOpen, User } from 'lucide-react-native';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import type { LucideIcon } from 'lucide-react-native';
+
+// ─── Tab icon com spring animation ───────────────────────────────────────────
+
+function TabIcon({ Icon, focused }: { Icon: LucideIcon; focused: boolean }) {
+  const scale = useSharedValue(1);
+  const dotOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (focused) {
+      // Bounce ao ativar
+      scale.value = withSequence(
+        withSpring(0.82, { damping: 6, stiffness: 200 }),
+        withSpring(1.08, { damping: 8, stiffness: 180 }),
+        withSpring(1.0, { damping: 10, stiffness: 200 })
+      );
+      dotOpacity.value = withSpring(1, { damping: 12 });
+    } else {
+      scale.value = withSpring(1, { damping: 12 });
+      dotOpacity.value = withSpring(0, { damping: 12 });
+    }
+  }, [focused]);
+
+  const iconAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const dotAnimStyle = useAnimatedStyle(() => ({
+    opacity: dotOpacity.value,
+    transform: [{ scale: dotOpacity.value }],
+  }));
+
+  return (
+    <View style={styles.iconWrapper}>
+      <Animated.View style={iconAnimStyle}>
+        <Icon
+          size={22}
+          color={focused ? Colors.tabActive : Colors.tabInactive}
+          strokeWidth={focused ? 2.2 : 1.8}
+        />
+      </Animated.View>
+      <Animated.View style={[styles.dot, dotAnimStyle]} />
+    </View>
+  );
+}
+
+// ─── Tab Layout ───────────────────────────────────────────────────────────────
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarActiveTintColor: Colors.tabActive,
+        tabBarInactiveTintColor: Colors.tabInactive,
+        tabBarStyle: {
+          backgroundColor: Colors.background,
+          borderTopColor: Colors.border,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 88 : 64,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          paddingTop: 10,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontFamily: 'Inter_500Medium',
+          marginTop: 2,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Início',
+          tabBarIcon: ({ focused }) => <TabIcon Icon={Home} focused={focused} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="scan"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Scan',
+          tabBarIcon: ({ focused }) => <TabIcon Icon={Camera} focused={focused} />,
         }}
       />
+      <Tabs.Screen
+        name="recipes"
+        options={{
+          title: 'Receitas',
+          tabBarIcon: ({ focused }) => <TabIcon Icon={BookOpen} focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ focused }) => <TabIcon Icon={User} focused={focused} />,
+        }}
+      />
+
+      {/* Telas legadas — ocultas da tab bar */}
+      <Tabs.Screen name="diet" options={{ href: null }} />
+      <Tabs.Screen name="workouts" options={{ href: null }} />
+      <Tabs.Screen name="shop" options={{ href: null }} />
+      <Tabs.Screen name="explore" options={{ href: null }} />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrapper: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: Colors.tabActive,
+  },
+});
