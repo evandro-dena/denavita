@@ -16,7 +16,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Bell, ChevronRight, X, Sparkles, Send } from 'lucide-react-native';
-import GaugeChart from '@/components/dashboard/GaugeChart';
+// import GaugeChart from '@/components/dashboard/GaugeChart'; // mantido — trocar abaixo para reverter
+import WeightLineChart from '@/components/dashboard/WeightLineChart';
 import FadeUpView from '@/components/ui/FadeUpView';
 import NeuralMesh from '@/components/ui/NeuralMesh';
 import { mockUser } from '@/mocks/userData';
@@ -535,8 +536,8 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Gauge */}
-          <GaugeChart
+          {/* Gráfico de linha peso × tempo (teste — GaugeChart preservado) */}
+          <WeightLineChart
             currentWeight={currentWeight}
             startWeight={mockUser.startWeight}
             goalWeight={mockUser.goalWeight}
