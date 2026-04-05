@@ -140,20 +140,13 @@ function MealAccordion({ meal }: { meal: Meal }) {
         style={accordionStyles.header}
         activeOpacity={0.7}
       >
-        {/* Left: emoji circle + name + time */}
         <View style={accordionStyles.headerLeft}>
-          <View style={accordionStyles.emojiCircle}>
-            <Text style={accordionStyles.emojiText}>{meal.emoji}</Text>
-          </View>
-          <View style={accordionStyles.headerInfo}>
-            <Text style={accordionStyles.mealName}>{meal.name}</Text>
-            <Text style={accordionStyles.mealMeta}>
-              {meal.time} · {totalCal} kcal
-            </Text>
-          </View>
+          <Text style={accordionStyles.mealName}>{meal.name}</Text>
+          <Text style={accordionStyles.mealMeta}>
+            {meal.time} · {totalCal} kcal
+          </Text>
         </View>
 
-        {/* Right: chevron */}
         <Animated.View style={arrowAnimStyle}>
           <ChevronDown size={18} color={Colors.textSecondary} strokeWidth={2} />
         </Animated.View>
@@ -184,6 +177,14 @@ function MealAccordion({ meal }: { meal: Meal }) {
             <MacroChip label="Gord" value={`${totalF}g`} color="#FFB74D" />
             <MacroChip label="kcal" value={`${totalCal}`} color={Colors.textSecondary} />
           </View>
+
+          {/* Opção de substituição */}
+          {meal.substitution && (
+            <View style={accordionStyles.substitution}>
+              <Text style={accordionStyles.substitutionLabel}>💡 Opção de substituição</Text>
+              <Text style={accordionStyles.substitutionText}>{meal.substitution}</Text>
+            </View>
+          )}
         </View>
       </Animated.View>
     </View>
@@ -237,37 +238,38 @@ const accordionStyles = StyleSheet.create({
     paddingVertical: 14,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
     flex: 1,
-  },
-  emojiCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#202020',
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emojiText: {
-    fontSize: 20,
-  },
-  headerInfo: {
-    flex: 1,
+    gap: 2,
   },
   mealName: {
     fontFamily: 'Poppins_600SemiBold',
-    fontSize: 14,
+    fontSize: 15,
     color: Colors.text,
   },
   mealMeta: {
     fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 1,
+  },
+  substitution: {
+    backgroundColor: '#1C1C1C',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(200,255,0,0.2)',
+    gap: 4,
+    marginTop: 4,
+  },
+  substitutionLabel: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 11,
+    color: Colors.accent,
+  },
+  substitutionText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
+    color: Colors.text,
+    lineHeight: 18,
   },
   body: {
     paddingHorizontal: Spacing.md,

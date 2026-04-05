@@ -13,6 +13,7 @@ export const mockMealPlan: DietPlan = {
       name: 'Café da Manhã',
       time: '07:00',
       emoji: '☕',
+      substitution: 'Tapioca com queijo branco + 1 fruta + iogurte natural desnatado (200g)',
       items: [
         {
           id: 'item-1-1',
@@ -57,6 +58,7 @@ export const mockMealPlan: DietPlan = {
       name: 'Lanche da Manhã',
       time: '10:00',
       emoji: '🍎',
+      substitution: '1 fruta + 10 castanhas-do-pará ou 1 barrinha de proteína sem açúcar',
       items: [
         {
           id: 'item-2-1',
@@ -101,6 +103,7 @@ export const mockMealPlan: DietPlan = {
       name: 'Almoço',
       time: '12:30',
       emoji: '🍛',
+      substitution: 'Filé de peixe grelhado (150g) + batata-doce (100g) + legumes refogados à vontade',
       items: [
         {
           id: 'item-3-1',
@@ -154,6 +157,7 @@ export const mockMealPlan: DietPlan = {
       name: 'Lanche da Tarde',
       time: '15:30',
       emoji: '🍌',
+      substitution: 'Iogurte grego + 1 fruta + 1 col. sopa de granola sem açúcar',
       items: [
         {
           id: 'item-4-1',
@@ -189,6 +193,7 @@ export const mockMealPlan: DietPlan = {
       name: 'Jantar',
       time: '19:00',
       emoji: '🌙',
+      substitution: 'Omelete de 3 ovos com legumes + salada verde à vontade',
       items: [
         {
           id: 'item-5-1',
@@ -233,6 +238,7 @@ export const mockMealPlan: DietPlan = {
       name: 'Ceia',
       time: '21:00',
       emoji: '🌛',
+      substitution: 'Iogurte natural desnatado (150g) + 1 col. chá de mel + canela',
       items: [
         {
           id: 'item-6-1',
